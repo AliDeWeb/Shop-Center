@@ -1,6 +1,6 @@
 export const getEnv = (
   EnvName: string,
-) => {
+): string => {
   const env = process.env[EnvName];
 
   if (!env)
