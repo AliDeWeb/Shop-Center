@@ -36,7 +36,7 @@ export class UserService {
 
   async updateUser(id: Schema.Types.ObjectId, body: UpdateUserDto) {
     try {
-      const result = await this.updateUser(id, body);
+      const result = await this.userRepository.update(id, body);
 
       if (!result) throw new NotFoundException('User not found');
 
