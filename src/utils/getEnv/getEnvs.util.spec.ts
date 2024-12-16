@@ -8,8 +8,6 @@ describe('getEnvs', () => {
 
   it('should throw an error if PORT is not defined', () => {
     delete process.env.PORT;
-    expect(() =>
-      getEnv('PORT'),
-    ).toThrow('Env PORT not defined');
+    expect(() => getEnv('PORT')).toThrow('Env PORT not defined');
   });
 });
