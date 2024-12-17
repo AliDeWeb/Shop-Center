@@ -1,6 +1,6 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": "../",
+  "rootDir": "../src",
   "testEnvironment": "node",
   "testMatch": [
     "**/modules/**/e2e/*.e2e-spec.ts"
