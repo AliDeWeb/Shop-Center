@@ -7,7 +7,7 @@ import { UserRepository } from '../repo/user.repository';
 import { User, UserSchema } from '../entities/user.entity';
 import { testDBUri } from '../../../../test/test-utils';
 
-describe('UserService (integration)', () => {
+describe('UserService (e2e)', () => {
   let service: UserService;
   let newUserId: mongoose.Types.ObjectId;
 
