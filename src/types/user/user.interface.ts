@@ -10,6 +10,8 @@ export interface IUser {
   name: string;
 
   password: string;
+
+  refreshTokens: string[];
 }
 
-export type IUserInput = Omit<IUser, '_id'>;
+export type IUserInput = Omit<IUser, '_id' | 'refreshTokens'>;

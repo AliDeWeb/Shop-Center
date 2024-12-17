@@ -31,6 +31,12 @@ export class User implements IUserInput {
     required: true,
   })
   password: string;
+
+  @Prop({
+    type: [String],
+    default: [],
+  })
+  refreshTokens: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
