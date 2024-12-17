@@ -15,15 +15,11 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async getUserById(id: Schema.Types.ObjectId) {
-    try {
-      const result = await this.userRepository.getById(id);
+    const result = await this.userRepository.getById(id);
 
-      if (!result) throw new NotFoundException('User not found');
+    if (!result) throw new NotFoundException('User not found');
 
-      return result;
-    } catch (err) {
-      throw new HttpException('server error', HttpStatus.SERVICE_UNAVAILABLE);
-    }
+    return result;
   }
 
   async createUser(body: CreateUserDto) {
@@ -35,24 +31,16 @@ export class UserService {
   }
 
   async updateUser(id: Schema.Types.ObjectId, body: UpdateUserDto) {
-    try {
-      const result = await this.userRepository.update(id, body);
+    const result = await this.userRepository.update(id, body);
 
-      if (!result) throw new NotFoundException('User not found');
+    if (!result) throw new NotFoundException('User not found');
 
-      return result;
-    } catch (err) {
-      throw new HttpException('server error', HttpStatus.SERVICE_UNAVAILABLE);
-    }
+    return result;
   }
 
   async deleteUserById(id: Schema.Types.ObjectId) {
-    try {
-      const result = await this.userRepository.delete(id);
+    const result = await this.userRepository.delete(id);
 
-      if (!result) throw new NotFoundException('User not found');
-    } catch (err) {
-      throw new HttpException('server error', HttpStatus.SERVICE_UNAVAILABLE);
-    }
+    if (!result) throw new NotFoundException('User not found');
   }
 }
