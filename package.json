@@ -26,7 +26,6 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^10.1.0",
-    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.1.0",
     "bcrypt": "^5.1.1",
@@ -34,7 +33,6 @@
     "class-validator": "^0.14.1",
     "express": "^4.21.2",
     "mongoose": "^8.9.0",
-    "passport": "^0.7.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "winston": "^3.17.0"
