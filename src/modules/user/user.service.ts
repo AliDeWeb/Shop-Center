@@ -24,7 +24,7 @@ export class UserService {
   async findUser(filter: FilterQuery<User>) {
     const result = await this.userRepository.find(filter);
 
-    if (!result) throw new NotFoundException('User not found');
+    if (!result.length) throw new NotFoundException('User not found');
 
     return result;
   }
