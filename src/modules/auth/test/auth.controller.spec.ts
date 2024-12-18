@@ -15,6 +15,7 @@ describe('AuthController (unit)', () => {
   let controller: AuthController;
   let mockAuthService: Partial<Record<keyof AuthService, jest.Mock>> = {
     registerUser: jest.fn(),
+    loginUser: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -86,6 +87,44 @@ describe('AuthController (unit)', () => {
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'welcome to shop center',
+      });
+    });
+  });
+
+  describe('loginUser', () => {
+    it('should be able to login user if user is exist', async () => {
+      const userDto = {
+        username: 'test',
+        password: '12345678',
+      };
+
+      mockAuthService.loginUser.mockResolvedValue({
+        refreshToken: 'refreshToken',
+        accessToken: 'accessToken',
+      });
+
+      const mockRes = {
+        cookie: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await controller.loginUser(userDto, mockRes);
+
+      expect(mockAuthService.loginUser).toHaveBeenCalledWith(userDto);
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'accessToken',
+        'accessToken',
+        expect.any(Object),
+      );
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refreshToken',
+        expect.any(Object),
+      );
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'welcome back to shop center',
       });
     });
   });
