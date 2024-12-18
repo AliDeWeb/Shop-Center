@@ -14,6 +14,7 @@ describe('UserService (unit)', () => {
       delete: jest.fn(),
       update: jest.fn(),
       getById: jest.fn(),
+      find: jest.fn(),
     };
 
     repo = mockRepo;
@@ -48,6 +49,27 @@ describe('UserService (unit)', () => {
 
       // @ts-ignore
       expect(service.getUserById(userId)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findUser', () => {
+    it("should return user when it's found", async () => {
+      const userId = new mongoose.Types.ObjectId();
+      const user = { _id: userId, name: 'Ali' };
+
+      repo.find.mockResolvedValue(user);
+
+      const result = await service.findUser({ name: 'ali' });
+
+      expect(result).toEqual(user);
+    });
+
+    it('should throw an exception when user is not found', async () => {
+      repo.find.mockResolvedValue(null);
+
+      expect(service.findUser({ name: 'ali' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -91,12 +113,6 @@ describe('UserService (unit)', () => {
 
     it('should throw an exception if user is not found', async () => {
       const userId = new mongoose.Types.ObjectId();
-      const userDto = {
-        name: 'Ali',
-        username: 'AliDeWeb',
-        email: 'alimoradi0business@gmail.com',
-        password: '12345678',
-      };
       const newPassword = '123456789';
 
       repo.update.mockResolvedValue(null);

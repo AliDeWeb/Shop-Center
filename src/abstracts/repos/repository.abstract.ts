@@ -1,11 +1,20 @@
-import { Document, Model as MongooseModel, Schema } from 'mongoose';
+import {
+  Document,
+  FilterQuery,
+  Model as MongooseModel,
+  Schema,
+} from 'mongoose';
 import { IRepository } from 'src/types/repo/repo.interface';
 
 export abstract class Repository<T extends Document> implements IRepository<T> {
-  constructor(private readonly Model: MongooseModel<T>) {}
+  protected constructor(private readonly Model: MongooseModel<T>) {}
 
   getById(id: Schema.Types.ObjectId): Promise<(T & Document) | null> {
     return this.Model.findById(id).exec();
+  }
+
+  find(filter: FilterQuery<T>) {
+    return this.Model.find(filter).exec();
   }
 
   create(body: Partial<T>): Promise<T & Document> {
