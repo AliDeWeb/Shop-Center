@@ -9,12 +9,18 @@ import { describe } from 'node:test';
 import mongoose from 'mongoose';
 import { IUserInput } from '../../../types/user/user.interface';
 import { UserService } from '../../user/user.service';
-import { ConflictException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 describe('AuthService (unit)', () => {
   let service: AuthService;
   let userService: Partial<Record<keyof UserService, jest.Mock>> = {
     createUser: jest.fn(),
+    findUser: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -89,6 +95,68 @@ describe('AuthService (unit)', () => {
       const newUser = service.registerUser(userDto);
 
       expect(newUser).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('loginUser', () => {
+    it('should login user if user is exist and password is true', async () => {
+      const userDto = {
+        name: 'Ali',
+        email: 'test@gmail.com',
+        password: '12345678',
+        username: 'username',
+        refreshTokens: [],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      userService.findUser.mockResolvedValue([userDto]);
+
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
+
+      const user = await service.loginUser({
+        username: userDto.username,
+        password: '',
+      });
+
+      expect(user).toMatchObject({
+        refreshToken: expect.any(String),
+        accessToken: expect.any(String),
+      });
+    });
+
+    it('should throw an error if password is false', async () => {
+      const userDto = {
+        name: 'Ali',
+        email: 'test@gmail.com',
+        password: '12345678',
+        username: 'username',
+        refreshTokens: [],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      userService.findUser.mockResolvedValue([userDto]);
+
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
+
+      const user = service.loginUser({
+        username: userDto.username,
+        password: '',
+      });
+
+      expect(user).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw an error if user is not exist', async () => {
+      userService.findUser.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+
+      const user = service.loginUser({
+        username: '',
+        password: '',
+      });
+
+      expect(user).rejects.toThrow(NotFoundException);
     });
   });
 });
