@@ -4,6 +4,7 @@ import { getEnv } from '../../utils/getEnv/getEnvs.util';
 import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,13 +45,37 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const payload = { id: newUser.id, username: newUser.username };
+    const payload = { id: newUser._id, username: newUser.username };
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
     const hashedRefreshToken = await this.hash(refreshToken);
 
     newUser.refreshTokens.push(hashedRefreshToken);
     await newUser.save();
+
+    return { refreshToken, accessToken };
+  }
+
+  async loginUser(body: LoginUserDto) {
+    const user = (
+      await this.userService.findUser({ username: body.username })
+    )[0];
+
+    const isPasswordCorrect = await bcrypt.compare(
+      body.password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect)
+      throw new UnauthorizedException('wrong username or password');
+
+    const payload = { id: user._id, username: user.username };
+    const accessToken = this.generateAccessToken(payload);
+    const refreshToken = this.generateRefreshToken(payload);
+    const hashedRefreshToken = await this.hash(refreshToken);
+
+    user.refreshTokens.push(hashedRefreshToken);
+    await user.save();
 
     return { refreshToken, accessToken };
   }
