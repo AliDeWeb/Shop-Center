@@ -1,6 +1,7 @@
 import { Schema } from 'mongoose';
 
 export type UserRole = 'owner' | 'admin' | 'user';
+export const EnumUserRoles: UserRole[] = ['user', 'admin', 'owner'];
 
 export interface IUser {
   _id: Schema.Types.ObjectId;

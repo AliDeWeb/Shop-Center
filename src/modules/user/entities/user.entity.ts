@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { IUserInput } from 'src/types/user/user.interface';
+import {
+  EnumUserRoles,
+  IUserInput,
+  UserRole,
+} from '../../../types/user/user.interface';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -12,6 +16,13 @@ export class User implements IUserInput {
     unique: true,
   })
   username: string;
+
+  @Prop({
+    type: String,
+    enum: EnumUserRoles,
+    default: 'user',
+  })
+  role: UserRole;
 
   @Prop({
     type: String,
