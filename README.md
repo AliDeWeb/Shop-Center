@@ -59,9 +59,18 @@ Welcome to Shop Center – an open-source e-commerce backend built with NestJS �
 
   DB_URL="mongodb url"
 
+  JWT_SECRET_KEY=12345678
+  JWT_ACCESS_TOKEN_EXPIRES_IN=15m
+  JWT_ACCESS_REFRESH_EXPIRES_IN=7d
+
+  BCRYPT_SALT=10
 ```
 
 before running e2e tests notice that you can edit `/test/test-utils.ts` file and change the test db uri.
+<br/>
+if you set `NODE_ENV=development`, you'll be able to access swagger document in `host/document`.
+<br/>
+you can download and import postman doc from `project-rootdir/postman`.
 
 
 ## Running Tests 🧪
