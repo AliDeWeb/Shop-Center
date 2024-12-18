@@ -57,15 +57,15 @@ describe('UserService (unit)', () => {
       const userId = new mongoose.Types.ObjectId();
       const user = { _id: userId, name: 'Ali' };
 
-      repo.find.mockResolvedValue(user);
+      repo.find.mockResolvedValue([user]);
 
       const result = await service.findUser({ name: 'ali' });
 
-      expect(result).toEqual(user);
+      expect(result[0]).toEqual(user);
     });
 
     it('should throw an exception when user is not found', async () => {
-      repo.find.mockResolvedValue(null);
+      repo.find.mockResolvedValue([]);
 
       expect(service.findUser({ name: 'ali' })).rejects.toThrow(
         NotFoundException,
