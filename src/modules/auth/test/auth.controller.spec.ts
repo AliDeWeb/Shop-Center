@@ -2,14 +2,13 @@ import { Test } from '@nestjs/testing';
 import { UserModule } from '../../user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { testDBUri } from '../../../../test/test-utils';
-import { JwtModule } from '@nestjs/jwt';
-import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import mongoose from 'mongoose';
 import { describe } from 'node:test';
 import { Response } from 'express';
 import { IUser } from '../../../types/user/user.interface';
+import { CommonModule } from '../../common/common.module';
 
 describe('AuthController (unit)', () => {
   let controller: AuthController;
@@ -25,13 +24,7 @@ describe('AuthController (unit)', () => {
     process.env.BCRYPT_SALT = '6';
 
     const module = await Test.createTestingModule({
-      imports: [
-        MongooseModule.forRoot(testDBUri),
-        JwtModule.registerAsync({
-          useFactory: async () => ({ secret: getEnv('JWT_SECRET_KEY') }),
-        }),
-        UserModule,
-      ],
+      imports: [MongooseModule.forRoot(testDBUri), CommonModule, UserModule],
       controllers: [AuthController],
       providers: [
         {

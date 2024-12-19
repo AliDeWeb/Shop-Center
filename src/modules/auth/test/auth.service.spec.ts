@@ -2,8 +2,6 @@ import { Test } from '@nestjs/testing';
 import { MongooseModule } from '@nestjs/mongoose';
 import { testDBUri } from '../../../../test/test-utils';
 import { UserModule } from '../../user/user.module';
-import { JwtModule } from '@nestjs/jwt';
-import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 import { AuthService } from '../auth.service';
 import { describe } from 'node:test';
 import mongoose from 'mongoose';
@@ -15,6 +13,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IUser } from '../../../types/user/user.interface';
+import { CommonModule } from '../../common/common.module';
 
 describe('AuthService (unit)', () => {
   let service: AuthService;
@@ -30,13 +29,7 @@ describe('AuthService (unit)', () => {
     process.env.BCRYPT_SALT = '6';
 
     const module = await Test.createTestingModule({
-      imports: [
-        MongooseModule.forRoot(testDBUri),
-        JwtModule.registerAsync({
-          useFactory: async () => ({ secret: getEnv('JWT_SECRET_KEY') }),
-        }),
-        UserModule,
-      ],
+      imports: [MongooseModule.forRoot(testDBUri), CommonModule, UserModule],
       providers: [
         AuthService,
         {
