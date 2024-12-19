@@ -66,6 +66,30 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/user/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
