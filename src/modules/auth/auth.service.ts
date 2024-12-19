@@ -25,14 +25,6 @@ export class AuthService {
     });
   }
 
-  private verifyToken(token: string) {
-    try {
-      return this.jwtService.verify(token);
-    } catch (err) {
-      throw new UnauthorizedException('invalid token');
-    }
-  }
-
   private hash(pass: string) {
     return bcrypt.hash(pass, Number(getEnv('BCRYPT_SALT')));
   }

@@ -6,9 +6,7 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class UserRepository extends Repository<UserDocument> {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-  ) {
+  constructor(@InjectModel(User.name) userModel: Model<UserDocument>) {
     super(userModel);
   }
 }

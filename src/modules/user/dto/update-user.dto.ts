@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IUserInput } from 'src/types/user/user.interface';
+import { IUser } from 'src/types/user/user.interface';
 
-export class UpdateUserDto implements Partial<IUserInput> {
+export class UpdateUserDto implements Partial<IUser> {
   @IsString({ message: `username must be string` })
   @IsOptional()
   @Transform(({ value }: { value: string }) => value.trim().toLowerCase())

@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IUserInput } from '../../../types/user/user.interface';
+import { IUser } from '../../../types/user/user.interface';
 
-export class LoginUserDto implements Pick<IUserInput, 'username' | 'password'> {
+export class LoginUserDto implements Pick<IUser, 'username' | 'password'> {
   @IsNotEmpty({ message: `username must not be empty` })
   @IsString({ message: `username must be string` })
   @MinLength(6, { message: 'username must be at least 6 characters' })
