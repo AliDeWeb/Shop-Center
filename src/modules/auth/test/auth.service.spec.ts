@@ -7,7 +7,6 @@ import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 import { AuthService } from '../auth.service';
 import { describe } from 'node:test';
 import mongoose from 'mongoose';
-import { IUserInput } from '../../../types/user/user.interface';
 import { UserService } from '../../user/user.service';
 import {
   ConflictException,
@@ -15,6 +14,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { IUser } from '../../../types/user/user.interface';
 
 describe('AuthService (unit)', () => {
   let service: AuthService;
@@ -58,7 +58,7 @@ describe('AuthService (unit)', () => {
 
   describe('registerUser', () => {
     it('should register a user if user is not exist', async () => {
-      const userDto: IUserInput = {
+      const userDto: IUser = {
         name: 'Ali',
         email: 'test@gmail.com',
         password: '12345678',
@@ -81,7 +81,7 @@ describe('AuthService (unit)', () => {
     });
 
     it('should throw an error if user is exist', () => {
-      const userDto: IUserInput = {
+      const userDto: IUser = {
         name: 'Ali',
         email: 'test@gmail.com',
         password: '12345678',

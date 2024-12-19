@@ -36,5 +36,14 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'off',
+
+    overrides: [
+      {
+        files: ['*.spec.ts', '*.test.ts'],
+        rules: {
+          '@typescript-eslint/no-floating-promises': 'off',
+        },
+      },
+    ],
   },
 };

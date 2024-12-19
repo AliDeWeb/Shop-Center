@@ -8,12 +8,12 @@ import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import mongoose from 'mongoose';
 import { describe } from 'node:test';
-import { IUserInput } from '../../../types/user/user.interface';
 import { Response } from 'express';
+import { IUser } from '../../../types/user/user.interface';
 
 describe('AuthController (unit)', () => {
   let controller: AuthController;
-  let mockAuthService: Partial<Record<keyof AuthService, jest.Mock>> = {
+  const mockAuthService: Partial<Record<keyof AuthService, jest.Mock>> = {
     registerUser: jest.fn(),
     loginUser: jest.fn(),
   };
@@ -53,7 +53,7 @@ describe('AuthController (unit)', () => {
 
   describe('registerUser', () => {
     it('should be able to register a user if user is not exist', async () => {
-      const userDto: IUserInput = {
+      const userDto: IUser = {
         name: 'test',
         username: 'test',
         email: 'test@gmail.com',
