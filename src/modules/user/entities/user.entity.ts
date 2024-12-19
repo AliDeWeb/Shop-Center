@@ -9,8 +9,10 @@ import {
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
-export class User implements IUser, Pick<IUserDocument, 'role'> {
+@Schema({ timestamps: true })
+export class User
+  implements IUser, Pick<IUserDocument, 'role' | 'refreshTokens'>
+{
   @Prop({
     type: String,
     required: true,
@@ -45,10 +47,10 @@ export class User implements IUser, Pick<IUserDocument, 'role'> {
   password: string;
 
   @Prop({
-    type: [String],
+    type: [{ token: String, expires_in: Number }],
     default: [],
   })
-  refreshTokens: string[];
+  refreshTokens: { token: string; expires_in: number }[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

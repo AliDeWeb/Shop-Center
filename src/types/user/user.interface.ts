@@ -15,5 +15,5 @@ export interface IUser {
 export interface IUserDocument extends Document, IUser {
   role: UserRole;
 
-  refreshTokens: string[];
+  refreshTokens: { token: string; expires_in: number }[];
 }
