@@ -1,22 +1,19 @@
-import { Schema } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type UserRole = 'owner' | 'admin' | 'user';
 export const EnumUserRoles: UserRole[] = ['user', 'admin', 'owner'];
 
 export interface IUser {
-  _id: Schema.Types.ObjectId;
-
   username: string;
 
   email: string;
 
-  role: UserRole;
-
   name: string;
 
   password: string;
+}
+export interface IUserDocument extends Document, IUser {
+  role: UserRole;
 
   refreshTokens: string[];
 }
-
-export type IUserInput = Omit<IUser, '_id' | 'refreshTokens' | 'role'>;
