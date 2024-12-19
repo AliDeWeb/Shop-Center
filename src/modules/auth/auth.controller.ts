@@ -3,10 +3,11 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
 import { Response } from 'express';
 import { getEnv } from '../../utils/getEnv/getEnvs.util';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
