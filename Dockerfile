@@ -14,4 +14,5 @@ COPY --from=build ./dist .
 COPY ./package.json .
 COPY ./.env .
 RUN pnpm install
+EXPOSE 3000
 CMD ["node", "./main.js"]

@@ -1,0 +1,35 @@
+services:
+  server:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - bridge_network
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_URL=mongodb://db:27017/shop-center
+      - JWT_SECRET_KEY=12345678
+      - JWT_ACCESS_TOKEN_EXPIRES_IN=15m
+      - JWT_ACCESS_REFRESH_EXPIRES_IN=7d
+      - BCRYPT_SALT=10
+
+  db:
+    image: mongo:7.0.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - db:/data/db
+      - configdb:/data/configdb
+    networks:
+      - bridge_network
+
+volumes:
+  db:
+  configdb:
+
+networks:
+  bridge_network:
+    driver: bridge
