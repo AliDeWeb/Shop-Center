@@ -66,11 +66,13 @@ Welcome to Shop Center – an open-source e-commerce backend built with NestJS �
   BCRYPT_SALT=10
 ```
 
-before running e2e tests notice that you can edit `/test/test-utils.ts` file and change the test db uri.
+* before running e2e tests notice that you can edit `/test/test-utils.ts` file and change the test db uri.
 <br/>
-if you set `NODE_ENV=development`, you'll be able to access swagger document in `host/document`.
+* if you set `NODE_ENV=development`, you'll be able to access swagger document in `host/document`.
 <br/>
-you can download and import postman doc from `project-rootdir/postman`.
+* you can download and import postman doc from `project-rootdir/postman`.
+<br/>
+* you can run project with `docker-compose up`, before that you must edit envs in `project-rootdir/docker-compose.yaml`.
 
 
 ## Running Tests 🧪
