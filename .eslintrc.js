@@ -5,9 +5,11 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
   extends: [
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:prettier/recommended',
   ],
   root: true,
@@ -15,17 +17,24 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'dist/**'],
   rules: {
+    // General Rules
+    'prettier/prettier': ['error', { singleQuote: true, trailingComma: 'all' }],
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+    // TypeScript-Specific Rules
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-floating-promises': 'error',
+
+    // Enforce Return Types for All Functions
+    '@typescript-eslint/explicit-function-return-type': 'error',
+
+    // NestJS-Specific Rules
     '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    'prettier/prettier': [
-      'error',
-      {
-        endOfLine: 'off',
-      },
-    ],
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 };
