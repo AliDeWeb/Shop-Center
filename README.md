@@ -85,11 +85,6 @@ To run the tests, use the following command:
   pnpm run test
 ```
 
-For e2e tests, you can use:
-```bash
-  pnpm run test:e2e
-```
-
 ## Contributing 🤝
 
 ### This project is open source and contributions are always welcome! 🙌
