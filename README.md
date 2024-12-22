@@ -15,7 +15,7 @@ Welcome to Shop Center – an open-source e-commerce backend built with NestJS �
 * Cart management 🛍️
 * Payment integration 💳
 * RESTful API 📡
-* Integration and unit tests 🧪
+* Unit tests 🧪
 * Docker support 🐳
 * And much more! 🌟
 
