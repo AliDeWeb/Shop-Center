@@ -9,7 +9,7 @@ import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -124,5 +124,12 @@ export class AuthService {
     );
 
     return { refreshToken, accessToken };
+  }
+
+  async logout(id: Schema.Types.ObjectId) {
+    const user = await this.userService.getUserById(id);
+
+    user.refreshTokens.splice(0, user.refreshTokens.length);
+    await user.save();
   }
 }
