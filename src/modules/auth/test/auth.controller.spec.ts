@@ -6,7 +6,7 @@ import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import mongoose from 'mongoose';
 import { describe } from 'node:test';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { IUser } from '../../../types/user/user.interface';
 import { CommonModule } from '../../common/common.module';
 
@@ -15,6 +15,7 @@ describe('AuthController (unit)', () => {
   const mockAuthService: Partial<Record<keyof AuthService, jest.Mock>> = {
     registerUser: jest.fn(),
     loginUser: jest.fn(),
+    generateNewAccessToken: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -118,6 +119,46 @@ describe('AuthController (unit)', () => {
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'welcome back to shop center',
+      });
+    });
+  });
+
+  describe('generateNewAccessToken', () => {
+    it('should be able to generate a new access token if user exists and token is valid', async () => {
+      const mockRes = {
+        cookie: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const mockReq = {
+        cookies: {
+          refreshToken: 'refreshToken',
+        },
+      } as unknown as Request;
+
+      mockAuthService.generateNewAccessToken.mockResolvedValue({
+        refreshToken: 'refreshToken',
+        accessToken: 'accessToken',
+      });
+
+      await controller.generateNewAccessToken(mockRes, mockReq);
+
+      expect(mockAuthService.generateNewAccessToken).toHaveBeenCalledWith(
+        mockReq.cookies.refreshToken,
+      );
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'accessToken',
+        'accessToken',
+        expect.any(Object),
+      );
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refreshToken',
+        expect.any(Object),
+      );
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'successfully generated access token',
       });
     });
   });
