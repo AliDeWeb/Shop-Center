@@ -8,19 +8,23 @@ import mongoose from 'mongoose';
 import { UserService } from '../../user/user.service';
 import {
   ConflictException,
+  ForbiddenException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IUser } from '../../../types/user/user.interface';
 import { CommonModule } from '../../common/common.module';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService (unit)', () => {
   let service: AuthService;
   let userService: Partial<Record<keyof UserService, jest.Mock>> = {
     createUser: jest.fn(),
     findUser: jest.fn(),
+    getUserById: jest.fn(),
   };
+  let jwtService: JwtService;
 
   beforeAll(async () => {
     process.env.JWT_SECRET_KEY = '1234';
@@ -41,6 +45,7 @@ describe('AuthService (unit)', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    jwtService = module.get<JwtService>(JwtService);
   });
   afterAll(async () => {
     await mongoose.disconnect();
@@ -151,6 +156,66 @@ describe('AuthService (unit)', () => {
       });
 
       expect(user).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('generateNewAccessToken', () => {
+    it('should be able to generate a new access token if user exists and token is valid', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const userDto = {
+        _id: new mongoose.Types.ObjectId(),
+        username: 'username',
+        refreshTokens: [refreshToken],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      userService.getUserById.mockResolvedValue(userDto);
+
+      jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue({
+        id: userDto._id,
+        username: userDto.username,
+        iat: Date.now(),
+        exp: Date.now() + 1000,
+      });
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
+
+      const result = await service.generateNewAccessToken(refreshToken);
+
+      expect(result).toHaveProperty('accessToken');
+      expect(result.refreshToken).toBe(refreshToken);
+    });
+
+    it('should throw ForbiddenException if refresh token is invalid', async () => {
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockRejectedValue(new Error('invalid token'));
+
+      const result = service.generateNewAccessToken('invalid-token');
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw ForbiddenException if refresh token does not match any stored tokens', async () => {
+      const refreshToken = 'invalid-refresh-token';
+      const userDto = {
+        _id: new mongoose.Types.ObjectId(),
+        username: 'username',
+        refreshTokens: ['other-refresh-token'],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      userService.getUserById.mockResolvedValue(userDto);
+
+      jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue({
+        id: userDto._id,
+        username: userDto.username,
+        iat: Date.now(),
+        exp: Date.now() + 1000,
+      });
+
+      const result = service.generateNewAccessToken(refreshToken);
+
+      expect(result).rejects.toThrow(ForbiddenException);
     });
   });
 });
