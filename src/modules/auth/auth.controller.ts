@@ -1,7 +1,15 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { getEnv } from '../../utils/getEnv/getEnvs.util';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -11,7 +19,24 @@ import { LoginUserDto } from './dto/login-user.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  private sendCookies(
+    res: Response,
+    result: { refreshToken: string; accessToken: string },
+  ) {
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: getEnv('NODE_ENV') === 'production',
+    });
+    res.cookie('accessToken', result.accessToken, {
+      httpOnly: true,
+      maxAge: 15 * 60 * 1000,
+      secure: getEnv('NODE_ENV') === 'production',
+    });
+  }
+
   @Post('/register')
+  @HttpCode(201)
   @ApiResponse({
     status: 201,
     description: 'Register a user',
@@ -58,21 +83,13 @@ export class AuthController {
   async registerUser(@Body() body: CreateUserDto, @Res() res: Response) {
     const result = await this.authService.registerUser(body);
 
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: getEnv('NODE_ENV') === 'production',
-    });
-    res.cookie('accessToken', result.accessToken, {
-      httpOnly: true,
-      maxAge: 15 * 60 * 1000,
-      secure: getEnv('NODE_ENV') === 'production',
-    });
+    this.sendCookies(res, result);
 
     res.status(201).json({ message: 'welcome to shop center' });
   }
 
   @Post('/login')
+  @HttpCode(200)
   @ApiResponse({
     status: 200,
     description: 'Login user',
@@ -119,17 +136,66 @@ export class AuthController {
   async loginUser(@Body() body: LoginUserDto, @Res() res: Response) {
     const result = await this.authService.loginUser(body);
 
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: getEnv('NODE_ENV') === 'production',
-    });
-    res.cookie('accessToken', result.accessToken, {
-      httpOnly: true,
-      maxAge: 15 * 60 * 1000,
-      secure: getEnv('NODE_ENV') === 'production',
-    });
+    this.sendCookies(res, result);
 
     res.status(200).json({ message: 'welcome back to shop center' });
+  }
+
+  @Get('/access-token')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Get access token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'successfully generated access token',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'user did not provide a valid token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'login or register to continue!',
+        },
+        error: {
+          type: 'string',
+          example: 'Forbidden',
+        },
+        statusCode: {
+          type: 'number',
+          example: '403',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found user',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'user not found' },
+        error: { type: 'string', example: 'error' },
+        statusCode: {
+          type: 'number',
+          example: '404',
+        },
+      },
+    },
+  })
+  async generateNewAccessToken(@Res() res: Response, @Req() req: Request) {
+    const result = await this.authService.generateNewAccessToken(
+      req.cookies.refreshToken,
+    );
+
+    this.sendCookies(res, result);
+
+    res.status(200).json({ message: 'successfully generated access token' });
   }
 }

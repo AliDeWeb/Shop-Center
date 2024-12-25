@@ -1,10 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { getEnv } from '../../utils/getEnv/getEnvs.util';
 import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { LoginUserDto } from './dto/login-user.dto';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +24,7 @@ export class AuthService {
     });
   }
 
-  private hash(pass: string) {
+  private hash(pass: string): Promise<string> {
     return bcrypt.hash(pass, Number(getEnv('BCRYPT_SALT')));
   }
 
@@ -37,15 +42,10 @@ export class AuthService {
       payload,
       getEnv('JWT_ACCESS_REFRESH_EXPIRES_IN'),
     );
-    const refreshTokenExpiresIn =
-      Date.now() +
-      parseInt(getEnv('JWT_ACCESS_REFRESH_EXPIRES_IN')) * 24 * 60 * 60 * 1000;
+
     const hashedRefreshToken = await this.hash(refreshToken);
 
-    newUser.refreshTokens.push({
-      token: hashedRefreshToken,
-      expires_in: refreshTokenExpiresIn,
-    });
+    newUser.refreshTokens.push(hashedRefreshToken);
     await newUser.save();
 
     return { refreshToken, accessToken };
@@ -75,18 +75,53 @@ export class AuthService {
       payload,
       getEnv('JWT_ACCESS_REFRESH_EXPIRES_IN'),
     );
-    const refreshTokenExpiresIn =
-      Date.now() +
-      parseInt(getEnv('JWT_ACCESS_REFRESH_EXPIRES_IN')) * 24 * 60 * 60 * 1000;
+
     const hashedRefreshToken = await this.hash(refreshToken);
 
-    user.refreshTokens.push({
-      token: hashedRefreshToken,
-      expires_in: refreshTokenExpiresIn,
-    });
+    user.refreshTokens.push(hashedRefreshToken);
     if (user.refreshTokens.length > Number(getEnv('MAX_ACTIVE_SESSIONS')))
       user.refreshTokens.shift();
     await user.save();
+
+    return { refreshToken, accessToken };
+  }
+
+  async generateNewAccessToken(refreshToken: string | undefined) {
+    let payload: {
+      iat: number;
+      exp: number;
+      id: mongoose.Schema.Types.ObjectId;
+      username: string;
+    };
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken);
+    } catch (error) {
+      throw new ForbiddenException('login or register to continue!');
+    }
+
+    const user = await this.userService.getUserById(payload.id);
+
+    let isRefreshTokenValid: boolean = false;
+    for (let token of user.refreshTokens) {
+      const matchCompareResult: boolean = await bcrypt.compare(
+        refreshToken,
+        token,
+      );
+
+      if (matchCompareResult) isRefreshTokenValid = true;
+    }
+
+    if (!isRefreshTokenValid)
+      throw new ForbiddenException('login or register to continue!');
+
+    const newPayload = {
+      id: payload.id,
+      username: payload.username,
+    };
+    const accessToken = this.generateToken(
+      newPayload,
+      getEnv('JWT_ACCESS_TOKEN_EXPIRES_IN'),
+    );
 
     return { refreshToken, accessToken };
   }

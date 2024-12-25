@@ -44,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"AliDeWeb\",\r\n  \"password\": \"12345678\"\r\n}",
+							"raw": "{\r\n  \"username\": \"alideweb\",\r\n  \"password\": \"12345678\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -60,6 +60,25 @@
 								"api",
 								"auth",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Access Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/auth/access-token",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"access-token"
 							]
 						}
 					},
@@ -96,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Ali Moradi\"\r\n    // \"email\": \"alimoradi0business@gmail.com\",\r\n    // \"name\": \"ali moradi\",\r\n    // \"password\": \"12345678\"\r\n}",
+							"raw": "{\r\n    \"username\": \"Moradi\"\r\n    // \"email\": \"alimoradi0business@gmail.com\",\r\n    // \"name\": \"ali moradi\",\r\n    // \"password\": \"12345678\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
