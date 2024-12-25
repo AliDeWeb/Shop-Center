@@ -6,6 +6,8 @@ import {
   IUserDocument,
   UserRole,
 } from '../../../types/user/user.interface';
+import * as bcrypt from 'bcrypt';
+import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -56,3 +58,28 @@ export class User
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.index({ username: 1, email: 1 }, { unique: true });
+
+UserSchema.pre<UserDocument>('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(getEnv('BCRYPT_SALT')),
+  );
+
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate() as { password?: string };
+
+  if (!update || !update.password) return next();
+
+  update.password = await bcrypt.hash(
+    update.password,
+    Number(getEnv('BCRYPT_SALT')),
+  );
+
+  this.setUpdate(update);
+  next();
+});
