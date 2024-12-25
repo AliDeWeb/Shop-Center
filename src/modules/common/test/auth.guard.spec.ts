@@ -111,14 +111,9 @@ describe('AuthGuard (unit)', () => {
       }),
     } as ExecutionContext;
 
-    const mockPayload = {
-      iat: 1672531200,
-      exp: Math.floor(Date.now() / 1000) - 1000,
-      id: 'userId',
-      username: 'testUser',
-    };
-
-    jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(mockPayload);
+    jest
+      .spyOn(jwtService, 'verifyAsync')
+      .mockRejectedValue(new Error('invalid'));
 
     const result = authGuard.canActivate(mockContext as ExecutionContext);
 

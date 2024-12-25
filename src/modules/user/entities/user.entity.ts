@@ -49,10 +49,10 @@ export class User
   password: string;
 
   @Prop({
-    type: [{ token: String, expires_in: Number }],
+    type: [String],
     default: [],
   })
-  refreshTokens: { token: string; expires_in: number }[];
+  refreshTokens: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

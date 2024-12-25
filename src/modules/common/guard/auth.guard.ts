@@ -1,8 +1,8 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -36,13 +36,8 @@ export class AuthGuard implements CanActivate {
       throw new ForbiddenException('login or register to continue!');
     }
 
-    const user = await this.userService.getUserById(payload.id);
-
-    if (payload.exp <= Math.floor(Date.now() / 1000))
-      throw new ForbiddenException('login or register to continue!');
-
     // @ts-ignore
-    request.user = user;
+    request.user = await this.userService.getUserById(payload.id);
 
     return true;
   }
