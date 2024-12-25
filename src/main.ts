@@ -9,7 +9,7 @@ async function bootstrap() {
   const nodeEnv = getEnv('NODE_ENV');
 
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
   app.setGlobalPrefix('api');
 
