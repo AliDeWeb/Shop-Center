@@ -10,9 +10,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { ApiCookieAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { IUserDocument } from '../../types/user/user.interface';
+import { IUserReq } from '../../types/user/user.interface';
 import { AuthGuard } from '../common/guard/auth.guard';
 import { User } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -61,7 +60,7 @@ export class UserController {
       },
     },
   })
-  getMe(@Req() req: Request & { user: IUserDocument }) {
+  getMe(@Req() req: IUserReq) {
     const { username, email, name } = req.user;
 
     return { username, email, name };
@@ -109,10 +108,7 @@ export class UserController {
       },
     },
   })
-  async updateMe(
-    @Req() req: Request & { user: IUserDocument },
-    @Body() body: UpdateUserDto,
-  ) {
+  async updateMe(@Req() req: IUserReq, @Body() body: UpdateUserDto) {
     const { _id } = req.user;
 
     const { name, username, email } = await this.userService.updateUser(
