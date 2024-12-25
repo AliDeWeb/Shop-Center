@@ -26,6 +26,7 @@ describe('AuthService (unit)', () => {
     process.env.JWT_SECRET_KEY = '1234';
     process.env.JWT_ACCESS_TOKEN_EXPIRES_IN = '15m';
     process.env.JWT_ACCESS_REFRESH_EXPIRES_IN = '7d';
+    process.env.MAX_ACTIVE_SESSIONS = '5';
     process.env.BCRYPT_SALT = '6';
 
     const module = await Test.createTestingModule({

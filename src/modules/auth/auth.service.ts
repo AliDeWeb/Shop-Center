@@ -84,6 +84,8 @@ export class AuthService {
       token: hashedRefreshToken,
       expires_in: refreshTokenExpiresIn,
     });
+    if (user.refreshTokens.length > Number(getEnv('MAX_ACTIVE_SESSIONS')))
+      user.refreshTokens.shift();
     await user.save();
 
     return { refreshToken, accessToken };
