@@ -8,9 +8,13 @@ import mongoose from 'mongoose';
 import { describe } from 'node:test';
 import { IUserDocument } from '../../../types/user/user.interface';
 import { Request } from 'express';
+import { UserService } from '../user.service';
 
 describe('UserController (unit)', () => {
   let controller: UserController;
+  let mockService: Partial<Record<keyof UserService, jest.Mock>> = {
+    updateUser: jest.fn(),
+  };
 
   beforeAll(async () => {
     const mockAuthGuard = {
@@ -20,6 +24,12 @@ describe('UserController (unit)', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [MongooseModule.forRoot(testDBUri)],
       controllers: [UserController],
+      providers: [
+        {
+          provide: UserService,
+          useValue: mockService,
+        },
+      ],
     })
       .overrideGuard(AuthGuard)
       .useValue(mockAuthGuard)
@@ -53,6 +63,31 @@ describe('UserController (unit)', () => {
         email: 'john@example.com',
         username: 'John Doe',
       });
+    });
+  });
+
+  describe('updateMe', () => {
+    it('should update and return user data if user exist', async () => {
+      const mockRequest = {
+        user: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: '123456',
+          username: 'John Doe',
+        },
+      } as Request & { user: IUserDocument };
+      const newName = 'test';
+
+      mockService.updateUser.mockResolvedValue({
+        ...mockRequest.user,
+        username: newName,
+      });
+
+      const result = await controller.updateMe(mockRequest, {
+        username: newName,
+      });
+
+      expect(result.data.username).toEqual(newName);
     });
   });
 });
