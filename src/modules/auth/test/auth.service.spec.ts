@@ -4,7 +4,7 @@ import { testDBUri } from '../../../../test/test-utils';
 import { UserModule } from '../../user/user.module';
 import { AuthService } from '../auth.service';
 import { describe } from 'node:test';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { UserService } from '../../user/user.service';
 import {
   ConflictException,
@@ -216,6 +216,25 @@ describe('AuthService (unit)', () => {
       const result = service.generateNewAccessToken(refreshToken);
 
       expect(result).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('logout', () => {
+    it('should be able to logout', async () => {
+      const userDto = {
+        _id: '1233' as unknown as Schema.Types.ObjectId,
+        username: 'username',
+        refreshTokens: ['token'],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      userService.getUserById.mockResolvedValue(userDto);
+
+      await service.logout(userDto._id);
+
+      expect(userService.getUserById).toHaveBeenCalledWith(userDto._id);
+      expect(userDto.refreshTokens).toEqual([]);
+      expect(userDto.save).toHaveBeenCalled();
     });
   });
 });

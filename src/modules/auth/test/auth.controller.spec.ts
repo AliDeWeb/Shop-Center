@@ -4,10 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { testDBUri } from '../../../../test/test-utils';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { describe } from 'node:test';
 import { Response, Request } from 'express';
-import { IUser } from '../../../types/user/user.interface';
+import { IUser, IUserReq } from '../../../types/user/user.interface';
 import { CommonModule } from '../../common/common.module';
 
 describe('AuthController (unit)', () => {
@@ -16,6 +16,7 @@ describe('AuthController (unit)', () => {
     registerUser: jest.fn(),
     loginUser: jest.fn(),
     generateNewAccessToken: jest.fn(),
+    logout: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -160,6 +161,28 @@ describe('AuthController (unit)', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'successfully generated access token',
       });
+    });
+  });
+
+  describe('logout', () => {
+    it('should logout user if user exist', async () => {
+      const mockRequest = {
+        user: {
+          _id: '12345678',
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: '123456',
+          username: 'John Doe',
+        },
+      } as IUserReq;
+
+      mockAuthService.logout.mockReturnValue(undefined);
+
+      await controller.logout(mockRequest);
+
+      expect(mockAuthService.logout).toHaveBeenCalledWith(
+        mockRequest.user._id as Schema.Types.ObjectId,
+      );
     });
   });
 });

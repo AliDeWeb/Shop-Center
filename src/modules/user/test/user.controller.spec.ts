@@ -6,7 +6,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '../../common/guard/auth.guard';
 import mongoose from 'mongoose';
 import { describe } from 'node:test';
-import { IUserDocument } from '../../../types/user/user.interface';
+import { IUserDocument, IUserReq } from '../../../types/user/user.interface';
 import { Request } from 'express';
 import { UserService } from '../user.service';
 
@@ -75,7 +75,7 @@ describe('UserController (unit)', () => {
           password: '123456',
           username: 'John Doe',
         },
-      } as Request & { user: IUserDocument };
+      } as IUserReq;
       const newName = 'test';
 
       mockService.updateUser.mockResolvedValue({

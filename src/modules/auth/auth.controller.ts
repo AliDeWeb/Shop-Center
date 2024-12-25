@@ -13,7 +13,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
 import { Response, Request } from 'express';
 import { getEnv } from '../../utils/getEnv/getEnvs.util';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IUserReq } from '../../types/user/user.interface';
 import { Schema } from 'mongoose';
@@ -148,6 +148,7 @@ export class AuthController {
 
   @Get('access-token')
   @HttpCode(200)
+  @ApiCookieAuth()
   @ApiResponse({
     status: 200,
     description: 'Get access token',
@@ -207,6 +208,7 @@ export class AuthController {
   @Patch('logout')
   @HttpCode(201)
   @UseGuards(AuthGuard)
+  @ApiCookieAuth()
   @ApiResponse({
     status: 201,
     description: 'Logout of all sessions',
