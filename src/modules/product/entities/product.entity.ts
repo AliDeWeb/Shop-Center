@@ -27,4 +27,4 @@ export class Product
   views: number;
 }
 
-export const productSchema = SchemaFactory.createForClass(Product);
+export const ProductSchema = SchemaFactory.createForClass(Product);
