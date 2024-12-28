@@ -18,7 +18,7 @@ export class Product
   images: string[];
 
   @Prop({ type: String })
-  description: string;
+  description?: string;
 
   @Prop({ default: 0 })
   sells: number;

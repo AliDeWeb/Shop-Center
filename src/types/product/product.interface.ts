@@ -5,7 +5,7 @@ export interface IProduct {
 
   images: string[];
 
-  description: string;
+  description?: string;
 }
 
 export interface IProductDocument extends Document, IProduct {

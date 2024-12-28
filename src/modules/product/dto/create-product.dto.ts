@@ -52,5 +52,5 @@ export class CreateProductDto implements IProduct {
     minLength: 64,
     maxLength: 600,
   })
-  description: string;
+  description?: string;
 }

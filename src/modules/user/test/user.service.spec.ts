@@ -6,21 +6,17 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('UserService (unit)', () => {
   let service: UserService;
-  let repo: Partial<Record<keyof UserRepository, jest.Mock>>;
+  let repo: Partial<Record<keyof UserRepository, jest.Mock>> = {
+    create: jest.fn(),
+    delete: jest.fn(),
+    update: jest.fn(),
+    getById: jest.fn(),
+    find: jest.fn(),
+  };
 
   beforeAll(async () => {
-    const mockRepo = {
-      create: jest.fn(),
-      delete: jest.fn(),
-      update: jest.fn(),
-      getById: jest.fn(),
-      find: jest.fn(),
-    };
-
-    repo = mockRepo;
-
     const module = await Test.createTestingModule({
-      providers: [UserService, { provide: UserRepository, useValue: mockRepo }],
+      providers: [UserService, { provide: UserRepository, useValue: repo }],
     }).compile();
 
     service = module.get<UserService>(UserService);
