@@ -3,3 +3,4 @@
 - using passport.js to authenticate user using google, facebook, etc.
 - delete unused /test/test-utils.ts file
 - mock Auth gaurds in product controller test
+- complete product controller doc
