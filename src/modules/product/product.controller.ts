@@ -12,7 +12,7 @@ export class ProductController {
   @HttpCode(200)
   @ApiResponse({
     status: 200,
-    description: 'Login user',
+    description: 'Get product',
     schema: {
       properties: {
         name: { type: 'string', example: 'samsung' },
