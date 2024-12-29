@@ -129,10 +129,10 @@ export class ProductController {
   })
   async createProduct(
     @Body() body: CreateProductDto,
-    @UploadedFiles() files: any,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     body.images = files.map(
-      (file: any) => `uploads/products/image/${file.filename}`,
+      (file) => `uploads/products/image/${file.filename}`,
     );
 
     const { name, images, description } =

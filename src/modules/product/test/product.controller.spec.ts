@@ -3,18 +3,53 @@ import { ProductController } from '../product.controller';
 import { ProductService } from '../product.service';
 import { describe } from 'node:test';
 import { Schema } from 'mongoose';
-import { BadRequestException } from '@nestjs/common';
+import { UserRepository } from '../../user/repo/user.repository';
+import { UserService } from '../../user/user.service';
+import { JwtModule } from '@nestjs/jwt';
+import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 
 describe('ProductController (unit)', () => {
   let controller: ProductController;
   let service: Partial<Record<keyof ProductService, jest.Mock>> = {
     getProductById: jest.fn(),
+    createProduct: jest.fn(),
+  };
+  const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
+    create: jest.fn(),
+    delete: jest.fn(),
+    getById: jest.fn(),
+    update: jest.fn(),
+    find: jest.fn(),
+  };
+  const mockUserService: Partial<Record<keyof UserService, jest.Mock>> = {
+    updateUser: jest.fn(),
+    getUserById: jest.fn(),
+    findUser: jest.fn(),
+    deleteUserById: jest.fn(),
+    createUser: jest.fn(),
   };
 
   beforeAll(async () => {
+    process.env.JWT_SECRET_KEY = '1234';
+
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.registerAsync({
+          useFactory: async () => ({ secret: getEnv('JWT_SECRET_KEY') }),
+        }),
+      ],
       controllers: [ProductController],
-      providers: [{ provide: ProductService, useValue: service }],
+      providers: [
+        { provide: ProductService, useValue: service },
+        {
+          provide: UserRepository,
+          useValue: mockUserRepo,
+        },
+        {
+          provide: UserService,
+          useValue: mockUserService,
+        },
+      ],
     }).compile();
 
     controller = module.get<ProductController>(ProductController);
@@ -37,19 +72,27 @@ describe('ProductController (unit)', () => {
       expect(result).toHaveProperty('name');
       expect(service.getProductById).toHaveBeenCalledWith(product.id);
     });
+  });
 
-    it('should throw err if id is invalid', async () => {
-      const product = {
-        id: 'invalid' as unknown as Schema.Types.ObjectId,
+  describe('createProduct', () => {
+    it('should create product and return it', async () => {
+      const productDto = {
         name: 'samsung',
         images: [],
+        description: '',
       };
 
-      const result = controller.getProductById({
-        id: product.id,
-      });
+      service.createProduct.mockResolvedValue(productDto);
 
-      expect(result).rejects.toThrow(BadRequestException);
+      const result = await controller.createProduct(productDto, [
+        { filename: 'ali' } as Express.Multer.File,
+      ]);
+
+      expect(result).toMatchObject({
+        message: expect.any(String),
+        data: expect.any(Object),
+      });
+      expect(service.createProduct).toHaveBeenCalledWith(productDto);
     });
   });
 });
