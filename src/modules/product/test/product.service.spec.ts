@@ -59,4 +59,21 @@ describe('ProductService (unit)', () => {
       expect(repo.getById).toHaveBeenCalledWith(product.id);
     });
   });
+
+  describe(`createProduct`, () => {
+    it('should create product and return it', async () => {
+      const productDto = {
+        id: 'valid id',
+        name: 'samsung',
+        images: [],
+      };
+
+      repo.create.mockResolvedValue(productDto);
+
+      const result = await service.createProduct(productDto);
+
+      expect(result).toEqual(productDto);
+      expect(repo.create).toHaveBeenCalledWith(productDto);
+    });
+  });
 });
