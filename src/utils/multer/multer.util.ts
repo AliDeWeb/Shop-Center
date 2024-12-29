@@ -1,5 +1,4 @@
-import multer, { Options } from 'multer';
-import { getEnv } from '../getEnv/getEnvs.util';
+import multer, { diskStorage, Options } from 'multer';
 import e from 'express';
 import { Error } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
@@ -10,17 +9,19 @@ const allowedFileTypes = {
     types: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
   },
 };
-enum allowedCategories {
-  products,
-}
+type allowedCategories = 'products';
 
 export const multerOptions: (
   category: allowedCategories,
   fileType: keyof typeof allowedFileTypes,
   maxFileSize: number,
-) => Options = (category, fileType, maxFileSize) => ({
-  storage: multer.diskStorage({
-    destination: `${getEnv('MULTER_DEST')}/${category}/${fileType}`,
+) => Options = (
+  category: allowedCategories,
+  fileType: keyof typeof allowedFileTypes,
+  maxFileSize: number,
+) => ({
+  storage: diskStorage({
+    destination: `statics/uploads/${category}/${fileType}`,
     filename(
       req: e.Request,
       file: Express.Multer.File,

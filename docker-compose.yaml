@@ -16,7 +16,6 @@ services:
       - JWT_ACCESS_REFRESH_EXPIRES_IN=7d
       - MAX_ACTIVE_SESSIONS=5
       - BCRYPT_SALT=10
-      - MULTER_DEST=statics/uploads
 
   db:
     image: mongo:7.0.0

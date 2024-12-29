@@ -46,8 +46,8 @@ export class CreateProductDto implements IProduct {
   @MaxLength(600, { message: 'description must be a maximum 600 characters' })
   @Transform(({ value }: { value: string }) => value.trim().toLowerCase())
   @ApiProperty({
-    name: 'name',
-    example: 'MacBook Pro 2024',
+    name: 'description',
+    example: 'MacBook Pro 2024 is ...',
     required: false,
     minLength: 64,
     maxLength: 600,
