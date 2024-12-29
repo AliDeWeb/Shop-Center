@@ -1,7 +1,5 @@
 import { UserController } from '../user.controller';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongooseModule } from '@nestjs/mongoose';
-import { testDBUri } from '../../../../test/test-utils';
 import { ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '../../common/guard/auth.guard';
 import mongoose from 'mongoose';
@@ -9,11 +7,19 @@ import { describe } from 'node:test';
 import { IUserDocument, IUserReq } from '../../../types/user/user.interface';
 import { Request } from 'express';
 import { UserService } from '../user.service';
+import { UserRepository } from '../repo/user.repository';
 
 describe('UserController (unit)', () => {
   let controller: UserController;
-  let mockService: Partial<Record<keyof UserService, jest.Mock>> = {
+  const mockService: Partial<Record<keyof UserService, jest.Mock>> = {
     updateUser: jest.fn(),
+  };
+  const mockRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
+    create: jest.fn(),
+    delete: jest.fn(),
+    getById: jest.fn(),
+    update: jest.fn(),
+    find: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -22,12 +28,15 @@ describe('UserController (unit)', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [MongooseModule.forRoot(testDBUri)],
       controllers: [UserController],
       providers: [
         {
           provide: UserService,
           useValue: mockService,
+        },
+        {
+          provide: UserRepository,
+          useValue: mockRepo,
         },
       ],
     })

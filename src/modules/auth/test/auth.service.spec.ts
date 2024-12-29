@@ -1,7 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { MongooseModule } from '@nestjs/mongoose';
-import { testDBUri } from '../../../../test/test-utils';
-import { UserModule } from '../../user/user.module';
 import { AuthService } from '../auth.service';
 import { describe } from 'node:test';
 import mongoose, { Schema } from 'mongoose';
@@ -14,17 +11,25 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IUser } from '../../../types/user/user.interface';
-import { CommonModule } from '../../common/common.module';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { UserRepository } from '../../user/repo/user.repository';
+import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 
 describe('AuthService (unit)', () => {
   let service: AuthService;
-  let userService: Partial<Record<keyof UserService, jest.Mock>> = {
+  const userService: Partial<Record<keyof UserService, jest.Mock>> = {
     createUser: jest.fn(),
     findUser: jest.fn(),
     getUserById: jest.fn(),
   };
   let jwtService: JwtService;
+  const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
+    create: jest.fn(),
+    delete: jest.fn(),
+    getById: jest.fn(),
+    update: jest.fn(),
+    find: jest.fn(),
+  };
 
   beforeAll(async () => {
     process.env.JWT_SECRET_KEY = '1234';
@@ -34,9 +39,17 @@ describe('AuthService (unit)', () => {
     process.env.BCRYPT_SALT = '6';
 
     const module = await Test.createTestingModule({
-      imports: [MongooseModule.forRoot(testDBUri), CommonModule, UserModule],
+      imports: [
+        JwtModule.registerAsync({
+          useFactory: async () => ({ secret: getEnv('JWT_SECRET_KEY') }),
+        }),
+      ],
       providers: [
         AuthService,
+        {
+          provide: UserRepository,
+          useValue: mockUserRepo,
+        },
         {
           provide: UserService,
           useValue: userService,
