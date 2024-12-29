@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../../exports/shared/dto/shared.dto';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 import { Response, Request } from 'express';
 import { getEnv } from '../../utils/getEnv/getEnvs.util';
 import { ApiCookieAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
