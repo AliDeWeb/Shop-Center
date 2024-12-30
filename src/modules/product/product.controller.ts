@@ -1,10 +1,12 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
   Param,
   Post,
+  SerializeOptions,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -22,6 +24,7 @@ import {
   multerOptions,
 } from '../../utils/multer/multer.util';
 import { Options } from 'multer';
+import { Product } from './entities/product.entity';
 
 const uploadProductImageOptions: {
   option: Options;
@@ -35,6 +38,8 @@ export class ProductController {
 
   @Get(':id')
   @HttpCode(200)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: Product })
   @ApiResponse({
     status: 200,
     description: 'Get product',
@@ -94,7 +99,9 @@ export class ProductController {
   @AllowableRoles('owner', 'admin')
   @UseInterceptors(
     FilesInterceptor('images', 5, uploadProductImageOptions.option),
+    ClassSerializerInterceptor,
   )
+  @SerializeOptions({ type: Product })
   @ApiResponse({
     status: 201,
     description: 'Create product',
