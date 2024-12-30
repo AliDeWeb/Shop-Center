@@ -10,7 +10,9 @@ const allowedFileTypes = {
     types: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
   },
 };
-type allowedCategories = 'products';
+export enum allowedCategories {
+  Products = 'products',
+}
 
 export const multerOptions: (
   category: allowedCategories,

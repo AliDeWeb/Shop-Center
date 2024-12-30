@@ -17,13 +17,16 @@ import { AuthGuard } from '../common/guard/auth.guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { AllowableRoles } from '../../decorators/allowableRoles/allowableRoles.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../../utils/multer/multer.util';
+import {
+  allowedCategories,
+  multerOptions,
+} from '../../utils/multer/multer.util';
 import { Options } from 'multer';
 
 const uploadProductImageOptions: {
   option: Options;
   path: string;
-} = multerOptions('products', 'image', 5);
+} = multerOptions(allowedCategories.Products, 'image', 5);
 
 @Controller('product')
 @ApiTags('Product')
