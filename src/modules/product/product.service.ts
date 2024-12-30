@@ -3,6 +3,7 @@ import { ProductRepository } from './repo/product.repository';
 import { Schema } from 'mongoose';
 import { IProductDocument } from '../../types/product/product.interface';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -18,5 +19,16 @@ export class ProductService {
 
   async createProduct(body: CreateProductDto): Promise<IProductDocument> {
     return await this.productRepository.create(body);
+  }
+
+  async updateProduct(
+    id: Schema.Types.ObjectId,
+    body: UpdateProductDto,
+  ): Promise<IProductDocument> {
+    const result = await this.productRepository.update(id, body);
+
+    if (!result) throw new NotFoundException('Product not found');
+
+    return result;
   }
 }
