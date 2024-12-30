@@ -76,4 +76,34 @@ describe('ProductService (unit)', () => {
       expect(repo.create).toHaveBeenCalledWith(productDto);
     });
   });
+
+  describe('updateProduct', () => {
+    it('should update product if it exists', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      repo.update.mockResolvedValue(product);
+
+      const result = await service.updateProduct(product.id, product);
+
+      expect(result).toEqual(product);
+      expect(repo.update).toHaveBeenCalledWith(product.id, product);
+    });
+
+    it('should throw err if product does not exists', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      repo.update.mockResolvedValue(null);
+
+      const result = service.updateProduct(product.id, product);
+
+      expect(repo.update).toHaveBeenCalledWith(product.id, product);
+      expect(result).rejects.toThrow(NotFoundException);
+    });
+  });
 });
