@@ -7,6 +7,9 @@ import { UserRepository } from '../../user/repo/user.repository';
 import { UserService } from '../../user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { getEnv } from '../../../utils/getEnv/getEnvs.util';
+import { AuthGuard } from '../../common/guard/auth.guard';
+import { ExecutionContext } from '@nestjs/common';
+import { RolesGuard } from '../../common/guard/roles.guard';
 
 describe('ProductController (unit)', () => {
   let controller: ProductController;
@@ -27,6 +30,9 @@ describe('ProductController (unit)', () => {
     findUser: jest.fn(),
     deleteUserById: jest.fn(),
     createUser: jest.fn(),
+  };
+  const mockGuard = {
+    canActivate: (context: ExecutionContext) => true,
   };
 
   beforeAll(async () => {
@@ -50,7 +56,12 @@ describe('ProductController (unit)', () => {
           useValue: mockUserService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(mockGuard)
+      .overrideGuard(RolesGuard)
+      .useValue(mockGuard)
+      .compile();
 
     controller = module.get<ProductController>(ProductController);
   });

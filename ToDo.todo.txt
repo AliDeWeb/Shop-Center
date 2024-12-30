@@ -1,5 +1,4 @@
 - 2 steps verification
 - reset password
 - using passport.js to authenticate user using google, facebook, etc.
-- mock Auth gaurds in product controller test
 - complete product controller doc
