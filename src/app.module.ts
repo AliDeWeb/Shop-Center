@@ -6,12 +6,18 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CommonModule } from './modules/common/common.module';
 import { ProductModule } from './modules/product/product.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { path as uploadedFilesPath } from './utils/multer/multer.util';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, `../${uploadedFilesPath.split('/')[0]}`),
     }),
     LoggerModule,
     DbModule,

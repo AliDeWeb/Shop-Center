@@ -3,7 +3,7 @@ import e from 'express';
 import { Error } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
 
-const path = 'statics/uploads';
+export const path = 'statics/uploads';
 const allowedFileTypes = {
   image: {
     name: 'image',
