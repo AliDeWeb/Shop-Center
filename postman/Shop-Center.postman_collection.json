@@ -217,6 +217,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"MacBook Pro 2023\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/product/update/677260948f9df1e6fc6ce191",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"update",
+								"677260948f9df1e6fc6ce191"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
