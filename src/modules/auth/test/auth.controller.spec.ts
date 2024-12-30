@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import { describe } from 'node:test';
 import { Response, Request } from 'express';
 import { IUser, IUserReq } from '../../../types/user/user.interface';
@@ -63,9 +63,6 @@ describe('AuthController (unit)', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-  });
-  afterAll(async () => {
-    await mongoose.disconnect();
   });
 
   it('should be defined', () => {

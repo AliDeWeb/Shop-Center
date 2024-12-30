@@ -2,7 +2,6 @@ import { UserController } from '../user.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '../../common/guard/auth.guard';
-import mongoose from 'mongoose';
 import { describe } from 'node:test';
 import { IUserDocument, IUserReq } from '../../../types/user/user.interface';
 import { Request } from 'express';
@@ -45,9 +44,6 @@ describe('UserController (unit)', () => {
       .compile();
 
     controller = module.get<UserController>(UserController);
-  });
-  afterAll(async () => {
-    await mongoose.disconnect();
   });
 
   it('should be defined', () => {

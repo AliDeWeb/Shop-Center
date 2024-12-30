@@ -60,9 +60,6 @@ describe('AuthService (unit)', () => {
     service = module.get<AuthService>(AuthService);
     jwtService = module.get<JwtService>(JwtService);
   });
-  afterAll(async () => {
-    await mongoose.disconnect();
-  });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
