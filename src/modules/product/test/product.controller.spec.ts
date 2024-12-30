@@ -5,8 +5,6 @@ import { describe } from 'node:test';
 import { Schema } from 'mongoose';
 import { UserRepository } from '../../user/repo/user.repository';
 import { UserService } from '../../user/user.service';
-import { JwtModule } from '@nestjs/jwt';
-import { getEnv } from '../../../utils/getEnv/getEnvs.util';
 import { AuthGuard } from '../../common/guard/auth.guard';
 import { ExecutionContext } from '@nestjs/common';
 import { RolesGuard } from '../../common/guard/roles.guard';
@@ -39,11 +37,6 @@ describe('ProductController (unit)', () => {
     process.env.JWT_SECRET_KEY = '1234';
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        JwtModule.registerAsync({
-          useFactory: async () => ({ secret: getEnv('JWT_SECRET_KEY') }),
-        }),
-      ],
       controllers: [ProductController],
       providers: [
         { provide: ProductService, useValue: service },
