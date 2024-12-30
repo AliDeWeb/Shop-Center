@@ -29,7 +29,7 @@ import { Product } from './entities/product.entity';
 const uploadProductImageOptions: {
   option: Options;
   path: string;
-} = multerOptions(allowedCategories.Products, 'image', 5);
+} = multerOptions(allowedCategories.PRODUCTS, 'image', 5);
 
 @Controller('product')
 @ApiTags('Product')

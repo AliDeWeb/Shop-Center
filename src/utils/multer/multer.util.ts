@@ -11,7 +11,7 @@ const allowedFileTypes = {
   },
 };
 export enum allowedCategories {
-  Products = 'products',
+  PRODUCTS = 'products',
 }
 
 export const multerOptions: (
