@@ -16,6 +16,7 @@ services:
       - JWT_ACCESS_REFRESH_EXPIRES_IN=7d
       - MAX_ACTIVE_SESSIONS=5
       - BCRYPT_SALT=10
+      - ORIGINS=127.0.0.1:3000,*
 
   db:
     image: mongo:7.0.0

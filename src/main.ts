@@ -4,13 +4,21 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { getEnv } from './utils/getEnv/getEnvs.util';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import * as compression from 'compression';
 
 async function bootstrap() {
   const nodeEnv = getEnv('NODE_ENV');
 
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.use(compression());
+  app.use(helmet());
   app.use(cookieParser());
+  app.enableCors({
+    origin: [...getEnv('ORIGINS').split(',')],
+    credentials: true,
+  });
   app.setGlobalPrefix('api');
 
   if (nodeEnv === 'development') {

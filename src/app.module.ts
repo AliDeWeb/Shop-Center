@@ -9,9 +9,16 @@ import { ProductModule } from './modules/product/product.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { path as uploadedFilesPath } from './utils/multer/multer.util';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
