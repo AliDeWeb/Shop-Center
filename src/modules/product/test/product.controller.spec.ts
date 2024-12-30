@@ -14,6 +14,7 @@ describe('ProductController (unit)', () => {
   let service: Partial<Record<keyof ProductService, jest.Mock>> = {
     getProductById: jest.fn(),
     createProduct: jest.fn(),
+    updateProduct: jest.fn(),
   };
   const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
     create: jest.fn(),
@@ -97,6 +98,28 @@ describe('ProductController (unit)', () => {
         data: expect.any(Object),
       });
       expect(service.createProduct).toHaveBeenCalledWith(productDto);
+    });
+  });
+
+  describe('updateProduct', () => {
+    it('should update and return product if it exists', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      service.updateProduct.mockResolvedValue(product);
+
+      const result = await controller.updateProduct(
+        { id: product.id },
+        product,
+      );
+
+      expect(service.updateProduct).toHaveBeenCalledWith(product.id, product);
+      expect(result).toMatchObject({
+        message: expect.any(String),
+        data: expect.any(Object),
+      });
     });
   });
 });
