@@ -6,12 +6,13 @@ import {
   HttpCode,
   Param,
   Post,
+  Patch,
   SerializeOptions,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { MongoIdPipe } from '../../pipes/Mongo/MongoId.pipe';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -25,6 +26,7 @@ import {
 } from '../../utils/multer/multer.util';
 import { Options } from 'multer';
 import { Product } from './entities/product.entity';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 const uploadProductImageOptions: {
   option: Options;
@@ -85,6 +87,7 @@ export class ProductController {
       },
     },
   })
+  @ApiParam({ name: 'id' })
   async getProductById(@Param() params: MongoIdPipe) {
     const { name, images, description } =
       await this.productService.getProductById(params.id);
@@ -177,6 +180,93 @@ export class ProductController {
 
     return {
       message: 'Product created',
+      data: {
+        name,
+        images,
+        description,
+      },
+    };
+  }
+
+  @Patch('update/:id')
+  @HttpCode(201)
+  @ApiCookieAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @AllowableRoles('owner', 'admin')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: Product })
+  @ApiResponse({
+    status: 201,
+    description: 'Update product',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'Product updated' },
+        data: {
+          properties: {
+            name: { type: 'string', example: 'samsung' },
+            images: { type: 'array', example: ['samsung.jpg'] },
+            description: { type: 'string', example: 'samsung is ...' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid body request',
+    schema: {
+      properties: {
+        message: {
+          type: 'array',
+          example: [
+            'name must be a maximum 64 characters',
+            'name must be at least 10 characters',
+            'name must be string',
+            'name must not be empty',
+          ],
+        },
+        error: {
+          type: 'string',
+          example: 'Bad Request',
+        },
+        statusCode: {
+          type: 'number',
+          example: '400',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'user did not provide a valid token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example:
+            'login or register to continue! or you do not have permission to do this action',
+        },
+        error: {
+          type: 'string',
+          example: 'Forbidden',
+        },
+        statusCode: {
+          type: 'number',
+          example: '403',
+        },
+      },
+    },
+  })
+  @ApiParam({ name: 'id' })
+  async updateProduct(
+    @Param() params: MongoIdPipe,
+    @Body() body: UpdateProductDto,
+  ) {
+    const { name, images, description } =
+      await this.productService.updateProduct(params.id, body);
+
+    return {
+      message: 'Product updated',
       data: {
         name,
         images,
