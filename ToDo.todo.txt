@@ -1,4 +1,3 @@
 - 2 steps verification
 - reset password
 - using passport.js to authenticate user using google, facebook, etc.
-- complete product controller doc

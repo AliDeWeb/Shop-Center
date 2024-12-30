@@ -127,6 +127,27 @@ export class ProductController {
       },
     },
   })
+  @ApiResponse({
+    status: 403,
+    description: 'user did not provide a valid token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example:
+            'login or register to continue! or you do not have permission to do this action',
+        },
+        error: {
+          type: 'string',
+          example: 'Forbidden',
+        },
+        statusCode: {
+          type: 'number',
+          example: '403',
+        },
+      },
+    },
+  })
   async createProduct(
     @Body() body: CreateProductDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
