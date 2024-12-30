@@ -18,6 +18,12 @@ import { RolesGuard } from '../common/guard/roles.guard';
 import { AllowableRoles } from '../../decorators/allowableRoles/allowableRoles.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../../utils/multer/multer.util';
+import { Options } from 'multer';
+
+const uploadProductImageOptions: {
+  option: Options;
+  path: string;
+} = multerOptions('products', 'image', 5);
 
 @Controller('product')
 @ApiTags('Product')
@@ -84,7 +90,7 @@ export class ProductController {
   @UseGuards(AuthGuard, RolesGuard)
   @AllowableRoles('owner', 'admin')
   @UseInterceptors(
-    FilesInterceptor('images', 5, multerOptions('products', 'image', 5)),
+    FilesInterceptor('images', 5, uploadProductImageOptions.option),
   )
   @ApiResponse({
     status: 201,
@@ -153,7 +159,7 @@ export class ProductController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     body.images = files.map(
-      (file) => `uploads/products/image/${file.filename}`,
+      (file) => `${uploadProductImageOptions.path}/${file.filename}`,
     );
 
     const { name, images, description } =
