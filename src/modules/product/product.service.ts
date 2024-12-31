@@ -65,7 +65,7 @@ export class ProductService {
     if (imageIndex === -1)
       throw new NotFoundException('Product image not found');
 
-    product.images.slice(imageIndex, 1);
+    product.images.splice(imageIndex, 1);
 
     await product.save();
 

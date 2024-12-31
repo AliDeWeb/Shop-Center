@@ -158,4 +158,38 @@ describe('ProductService (unit)', () => {
       expect(result.images).toEqual(['1', '2']);
     });
   });
+
+  describe('deleteProductImage', () => {
+    it('should delete product image if image exists', async () => {
+      const imagePath = '2';
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+        images: ['1', imagePath],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      repo.getById.mockResolvedValue(product);
+
+      const result = await service.deleteProductImage(product.id, imagePath);
+
+      expect(result.images).toEqual(['1']);
+    });
+
+    it('should throw err if image doest exists', async () => {
+      const imagePath = '2';
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+        images: ['1'],
+        save: jest.fn().mockResolvedValue(true),
+      };
+
+      repo.getById.mockResolvedValue(product);
+
+      const result = service.deleteProductImage(product.id, imagePath);
+
+      expect(result).rejects.toThrow(NotFoundException);
+    });
+  });
 });
