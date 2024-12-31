@@ -335,6 +335,6 @@ export class ProductController {
   async deleteProduct(@Param() params: MongoIdPipe) {
     await this.productService.deleteProduct(params.id);
 
-    return { massage: 'Product deleted' };
+    return { message: 'Product deleted' };
   }
 }

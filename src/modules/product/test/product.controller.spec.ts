@@ -15,6 +15,7 @@ describe('ProductController (unit)', () => {
     getProductById: jest.fn(),
     createProduct: jest.fn(),
     updateProduct: jest.fn(),
+    deleteProduct: jest.fn(),
   };
   const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
     create: jest.fn(),
@@ -120,6 +121,22 @@ describe('ProductController (unit)', () => {
         message: expect.any(String),
         data: expect.any(Object),
       });
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('should delete product', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      service.deleteProduct.mockResolvedValue(undefined);
+
+      const result = await controller.deleteProduct({ id: product.id });
+
+      expect(service.deleteProduct).toHaveBeenCalledWith(product.id);
+      expect(result).toMatchObject({ message: expect.any(String) });
     });
   });
 });
