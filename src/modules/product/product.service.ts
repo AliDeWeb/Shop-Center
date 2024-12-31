@@ -31,4 +31,10 @@ export class ProductService {
 
     return result;
   }
+
+  async deleteProduct(id: Schema.Types.ObjectId): Promise<void> {
+    const result = await this.productRepository.delete(id);
+
+    if (!result) throw new NotFoundException('Product not found');
+  }
 }
