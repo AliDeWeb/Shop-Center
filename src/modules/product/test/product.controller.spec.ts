@@ -16,6 +16,7 @@ describe('ProductController (unit)', () => {
     createProduct: jest.fn(),
     updateProduct: jest.fn(),
     deleteProduct: jest.fn(),
+    addProductImage: jest.fn(),
   };
   const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
     create: jest.fn(),
@@ -137,6 +138,31 @@ describe('ProductController (unit)', () => {
 
       expect(service.deleteProduct).toHaveBeenCalledWith(product.id);
       expect(result).toMatchObject({ message: expect.any(String) });
+    });
+  });
+
+  describe('addProductImage', () => {
+    it('should add a new image to product images', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+        images: ['1'],
+      };
+
+      service.addProductImage.mockResolvedValue(product);
+
+      const result = await controller.addProductImage({ id: product.id }, [
+        { filename: '2' } as unknown as Express.Multer.File,
+      ]);
+
+      expect(service.addProductImage).toHaveBeenCalledWith(
+        product.id,
+        'uploads/products/image/2',
+      );
+      expect(result).toMatchObject({
+        message: expect.any(String),
+        data: expect.any(Object),
+      });
     });
   });
 });
