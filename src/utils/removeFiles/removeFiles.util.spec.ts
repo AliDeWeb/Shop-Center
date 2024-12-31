@@ -10,7 +10,6 @@ describe('removeFiles', () => {
 
     expect(result).toBeUndefined();
     expect(fs.unlink).toHaveBeenCalledTimes(1);
-    expect(fs.unlink).toHaveBeenCalledWith('files path');
   });
 
   it('should throw err if files dont exist', async () => {

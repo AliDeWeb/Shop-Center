@@ -4,6 +4,7 @@ import { ProductService } from '../product.service';
 import { describe } from 'node:test';
 import { Schema } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
+import { promises as fs } from 'fs';
 
 describe('ProductService (unit)', () => {
   let service: ProductService;
@@ -109,9 +110,12 @@ describe('ProductService (unit)', () => {
 
   describe('deleteProduct', () => {
     it('should delete the product if it exists', async () => {
+      jest.spyOn(fs, 'unlink').mockResolvedValue(undefined);
+
       const product = {
         id: 'valid id' as unknown as Schema.Types.ObjectId,
         name: 'samsung',
+        images: ['path'],
       };
 
       repo.delete.mockResolvedValue(product);
