@@ -4,6 +4,7 @@ import { Schema } from 'mongoose';
 import { IProductDocument } from '../../types/product/product.interface';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { removeFiles } from '../../utils/removeFiles/removeFiles.util';
 
 @Injectable()
 export class ProductService {
@@ -36,5 +37,7 @@ export class ProductService {
     const result = await this.productRepository.delete(id);
 
     if (!result) throw new NotFoundException('Product not found');
+
+    await removeFiles(result.images);
   }
 }
