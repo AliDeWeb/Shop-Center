@@ -253,7 +253,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/api/product/delete/677260948f9df1e6fc6ce191",
+							"raw": "{{URL}}/api/product/delete/6773bbfeb545d091947ce7e9",
 							"host": [
 								"{{URL}}"
 							],
@@ -261,7 +261,69 @@
 								"api",
 								"product",
 								"delete",
-								"677260948f9df1e6fc6ce191"
+								"6773bbfeb545d091947ce7e9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Image",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/product/update/6773d2fd014678d8853164df/img",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"update",
+								"6773d2fd014678d8853164df",
+								"img"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"image\": \"uploads/products/image/products-image-1735644135105-39590.png\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/product/delete/6773d2fd014678d8853164df/img",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"delete",
+								"6773d2fd014678d8853164df",
+								"img"
 							]
 						}
 					},
