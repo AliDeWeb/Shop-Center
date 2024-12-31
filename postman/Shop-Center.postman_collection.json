@@ -246,6 +246,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/product/delete/677260948f9df1e6fc6ce191",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"delete",
+								"677260948f9df1e6fc6ce191"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
