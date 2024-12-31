@@ -140,4 +140,22 @@ describe('ProductService (unit)', () => {
       expect(result).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('addProductImage', () => {
+    it('should add new image address to product.images', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+        images: ['1'],
+        save: jest.fn().mockResolvedValue(true),
+      };
+      const newImagePath = '2';
+
+      repo.getById.mockResolvedValue(product);
+
+      const result = await service.addProductImage(product.id, newImagePath);
+
+      expect(result.images).toEqual(['1', '2']);
+    });
+  });
 });
