@@ -337,4 +337,103 @@ export class ProductController {
 
     return { message: 'Product deleted' };
   }
+
+  @Patch('update/:id/img')
+  @HttpCode(201)
+  @ApiCookieAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @AllowableRoles('owner', 'admin')
+  @UseInterceptors(
+    FilesInterceptor('images', 1, uploadProductImageOptions.option),
+    ClassSerializerInterceptor,
+  )
+  @SerializeOptions({ type: Product })
+  @ApiResponse({
+    status: 201,
+    description: 'Update product',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'product updated' },
+        data: {
+          properties: {
+            name: { type: 'string', example: 'samsung' },
+            images: { type: 'array', example: ['samsung.jpg'] },
+            description: { type: 'string', example: 'samsung is ...' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'this err will happen if images are more than 1',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Unexpected field',
+        },
+        error: {
+          type: 'string',
+          example: 'Bad Request',
+        },
+        statusCode: {
+          type: 'number',
+          example: '400',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'user did not provide a valid token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example:
+            'login or register to continue! or you do not have permission to do this action',
+        },
+        error: {
+          type: 'string',
+          example: 'Forbidden',
+        },
+        statusCode: {
+          type: 'number',
+          example: '403',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'this err will happen if images are 0!',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Internal server error',
+        },
+        statusCode: {
+          type: 'number',
+          example: '500',
+        },
+      },
+    },
+  })
+  @ApiParam({ name: 'id' })
+  async addProductImage(
+    @Param() params: MongoIdPipe,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    const imagePath = `${uploadProductImageOptions.path}/${files[0].filename}`;
+
+    const { name, description, images } =
+      await this.productService.addProductImage(params.id, imagePath);
+
+    return {
+      message: 'product updated',
+      data: { name, description, images },
+    };
+  }
 }
