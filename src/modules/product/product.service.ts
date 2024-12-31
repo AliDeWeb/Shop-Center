@@ -40,4 +40,35 @@ export class ProductService {
 
     await removeFiles(result.images);
   }
+
+  async addProductImage(
+    id: Schema.Types.ObjectId,
+    imagePath: string,
+  ): Promise<IProductDocument> {
+    const product = await this.getProductById(id);
+
+    product.images.push(imagePath);
+
+    await product.save();
+
+    return product;
+  }
+
+  async deleteProductImage(
+    id: Schema.Types.ObjectId,
+    imagePath: string,
+  ): Promise<IProductDocument> {
+    const product = await this.getProductById(id);
+
+    const imageIndex = product.images.indexOf(imagePath);
+
+    if (imageIndex === -1)
+      throw new NotFoundException('Product image not found');
+
+    product.images.slice(imageIndex, 1);
+
+    await product.save();
+
+    return product;
+  }
 }
