@@ -106,4 +106,34 @@ describe('ProductService (unit)', () => {
       expect(result).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('deleteProduct', () => {
+    it('should delete the product if it exists', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      repo.delete.mockResolvedValue(product);
+
+      const result = await service.deleteProduct(product.id);
+
+      expect(repo.delete).toHaveBeenCalledWith(product.id);
+      expect(result).toBe(undefined);
+    });
+
+    it('should throw an err if product does not exist', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+      };
+
+      repo.delete.mockResolvedValue(null);
+
+      const result = service.deleteProduct(product.id);
+
+      expect(repo.delete).toHaveBeenCalledWith(product.id);
+      expect(result).rejects.toThrow(NotFoundException);
+    });
+  });
 });
