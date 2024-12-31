@@ -11,6 +11,7 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
@@ -213,7 +214,7 @@ export class ProductController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid body request',
+    description: 'Invalid body or param request',
     schema: {
       properties: {
         message: {
@@ -273,5 +274,67 @@ export class ProductController {
         description,
       },
     };
+  }
+
+  @Delete('delete/:id')
+  @HttpCode(201)
+  @ApiCookieAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @AllowableRoles('owner', 'admin')
+  @ApiResponse({
+    status: 201,
+    description: 'Delete product',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'Product deleted' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid body or param request',
+    schema: {
+      properties: {
+        message: {
+          type: 'array',
+          example: ['id must be a mongoId'],
+        },
+        error: {
+          type: 'string',
+          example: 'Bad Request',
+        },
+        statusCode: {
+          type: 'number',
+          example: '400',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'user did not provide a valid token',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example:
+            'login or register to continue! or you do not have permission to do this action',
+        },
+        error: {
+          type: 'string',
+          example: 'Forbidden',
+        },
+        statusCode: {
+          type: 'number',
+          example: '403',
+        },
+      },
+    },
+  })
+  @ApiParam({ name: 'id' })
+  async deleteProduct(@Param() params: MongoIdPipe) {
+    await this.productService.deleteProduct(params.id);
+
+    return { massage: 'Product deleted' };
   }
 }
