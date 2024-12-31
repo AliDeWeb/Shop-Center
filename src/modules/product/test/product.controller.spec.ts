@@ -17,6 +17,7 @@ describe('ProductController (unit)', () => {
     updateProduct: jest.fn(),
     deleteProduct: jest.fn(),
     addProductImage: jest.fn(),
+    deleteProductImage: jest.fn(),
   };
   const mockUserRepo: Partial<Record<keyof UserRepository, jest.Mock>> = {
     create: jest.fn(),
@@ -159,6 +160,31 @@ describe('ProductController (unit)', () => {
         product.id,
         'uploads/products/image/2',
       );
+      expect(result).toMatchObject({
+        message: expect.any(String),
+        data: expect.any(Object),
+      });
+    });
+  });
+
+  describe('deleteProductImage', () => {
+    it('should delete product image', async () => {
+      const product = {
+        id: 'valid id' as unknown as Schema.Types.ObjectId,
+        name: 'samsung',
+        images: ['1'],
+      };
+
+      service.deleteProductImage.mockResolvedValue(product);
+
+      const result = await controller.deleteProductImage(
+        { id: product.id },
+        {
+          image: '1',
+        },
+      );
+
+      expect(service.deleteProductImage).toHaveBeenCalledWith(product.id, '1');
       expect(result).toMatchObject({
         message: expect.any(String),
         data: expect.any(Object),
