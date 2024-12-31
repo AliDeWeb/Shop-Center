@@ -161,6 +161,8 @@ describe('ProductService (unit)', () => {
 
   describe('deleteProductImage', () => {
     it('should delete product image if image exists', async () => {
+      jest.spyOn(fs, 'unlink').mockResolvedValue(undefined);
+
       const imagePath = '2';
       const product = {
         id: 'valid id' as unknown as Schema.Types.ObjectId,

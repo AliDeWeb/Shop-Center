@@ -69,6 +69,8 @@ export class ProductService {
 
     await product.save();
 
+    await removeFiles([imagePath]);
+
     return product;
   }
 }
